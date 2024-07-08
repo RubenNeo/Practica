@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Practice</string>
+    <string name="Comencemos">GetStarted</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="Categories_fragment">Categories</string>
+    <string name="Home_fragment">Home</string>
+    <string name="Favorite_fragment">Favorite</string>
+</resources>

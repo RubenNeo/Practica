@@ -4,6 +4,7 @@ import com.example.practice.ApiServiceMeal.MealList
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface FoodApiService {
 
@@ -12,4 +13,6 @@ interface FoodApiService {
     @GET ("random.php")
     fun getRandomFood():Call<MealList>
 
+    @GET ("lookup-php?")
+    fun getFoodDetails(@Query("i")id : String) : Call <MealList>
 }

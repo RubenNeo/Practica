@@ -30,6 +30,7 @@ class home_fragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(
@@ -40,6 +41,7 @@ class home_fragment : Fragment() {
         binding = FragmentHomeFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -74,4 +76,5 @@ class home_fragment : Fragment() {
             }
         })
     }
+
 }

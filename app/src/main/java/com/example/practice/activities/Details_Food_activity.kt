@@ -1,8 +1,11 @@
 package com.example.practice.activities
 
+
+import android.content.Intent
+import android.net.Uri
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.practice.ApiServiceMeal.Meal
 import com.example.practice.ApiServiceMeal.MealList
@@ -27,10 +30,20 @@ class Details_Food_activity : AppCompatActivity() {
         setContentView(binding.root)
         getInformationFromIntent()
         setInformationInViews()
-        getMealDetails()  // Llama a la función para obtener detalles de la comida
+        getMealDetails() // Llama a la función para obtener detalles de la comida
+        onYoutubeImageLink()//Llamamos a la funcion desde aqui
     }
 
-    // Aplicamos la imagen cargada ya con Glide en el imageView mediante la API y la cargamos
+
+    //Funcion para que que el ImageView de youtube abra el link hacia esa receta
+    private fun onYoutubeImageLink() {
+        binding.imgYoutube.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(youtubeLink))
+            startActivity(intent)
+        }
+    }
+
+    //Aplicamos la imagen cargada ya con Glide en el imageView mediante la API y la cargamos
     private fun setInformationInViews() {
         Glide.with(applicationContext)
             .load(mealPhoto)
@@ -40,13 +53,14 @@ class Details_Food_activity : AppCompatActivity() {
         binding.collapsing.setExpandedTitleColor(resources.getColor(R.color.white))
     }
 
+
     // Los valores se asignan a las variables mealId, mealName, y mealPhoto que son inicializadas al recibir los datos del Intent
     private fun getInformationFromIntent() {
         val intent = intent
         mealId = intent.getStringExtra(home_fragment.MEAL_ID)!!
         mealName = intent.getStringExtra(home_fragment.MEAL_NAME)!!
         mealPhoto = intent.getStringExtra(home_fragment.MEAL_PHOTO)!!
-        Log.d("Details_Food_activity", "Meal ID: $mealId, Meal Name: $mealName, Meal Photo: $mealPhoto")
+        Log.d("Food Details", "Meal ID: $mealId, Meal Name: $mealName, Meal Photo: $mealPhoto")
     }
 
     // Obtenemos los detalles de la comida usando Retrofit y actualizamos la UI
@@ -55,10 +69,10 @@ class Details_Food_activity : AppCompatActivity() {
             override fun onResponse(call: Call<MealList>, response: Response<MealList>) {
                 if (response.body() != null && response.body()!!.meals.isNotEmpty()) {
                     val meal: Meal = response.body()!!.meals[0]
-                    Log.d("Details_Food_activity", "Meal details: $meal")
+                    Log.d("Food Details", "Meal details: $meal")
                     updateUI(meal)
                 } else {
-                    Log.d("Details_Food_activity", "Response body is null or empty")
+                    Log.d("Food Details", "Response body is null or empty")
                 }
             }
 
@@ -73,6 +87,8 @@ class Details_Food_activity : AppCompatActivity() {
         binding.AreaId.text = "Area: ${meal.strArea}"
         binding.InstruccionsId.text = meal.strInstructions
         youtubeLink = meal.strYoutube
-        Log.d("Details_Food_activity", "UI updated with meal details")
     }
+
+
+
 }

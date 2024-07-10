@@ -43,6 +43,7 @@ class Categories_fragment : Fragment() {
             layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
             adapter = categoriesAdapter
 
+
         }
     }
 

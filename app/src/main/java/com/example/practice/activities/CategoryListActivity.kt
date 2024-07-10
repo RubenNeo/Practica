@@ -2,6 +2,7 @@ package com.example.practice.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.practice.Adapter.FoodByCategoriesAdapter
 import com.example.practice.ApiServiceMeal.FoodByCategories
@@ -29,6 +30,7 @@ class CategoryListActivity : AppCompatActivity() {
         foodByCategoriesAdapter = FoodByCategoriesAdapter()
         binding.rvFoodByCategory.apply {
             layoutManager = LinearLayoutManager(this@CategoryListActivity)
+            layoutManager = GridLayoutManager(context, 2, GridLayoutManager.VERTICAL,false)
             adapter = foodByCategoriesAdapter
         }
     }
@@ -41,13 +43,13 @@ class CategoryListActivity : AppCompatActivity() {
                         foodByCategoriesAdapter.setCategoriesList(it)
                     }
                 } else {
-                    // Manejar respuesta no exitosa
+                   //Poner algun tipo de respuesta
                 }
             }
 
             override fun onFailure(call: Call<FoodByCategories>, t: Throwable) {
                 t.printStackTrace()
-                // Manejar error de red u otro tipo de error
+                //error
             }
         })
     }

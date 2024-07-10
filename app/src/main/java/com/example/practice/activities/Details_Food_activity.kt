@@ -1,41 +1,59 @@
 package com.example.practice.activities
 
-
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.practice.ApiServiceMeal.Meal
 import com.example.practice.ApiServiceMeal.MealList
 import com.example.practice.R
 import com.example.practice.Retrofit.RetrofitInstance
+import com.example.practice.database.FavoriteMeal
+import com.example.practice.database.FavoriteMealRepository
 import com.example.practice.databinding.ActivityDetailsFoodBinding
 import com.example.practice.fragments.home_fragment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class Details_Food_activity : AppCompatActivity() {
+class  Details_Food_activity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailsFoodBinding
     private lateinit var mealId: String
     private lateinit var mealName: String
     private lateinit var mealPhoto: String
     private lateinit var youtubeLink: String
+    private lateinit var favoriteMealRepository: FavoriteMealRepository
 
+    // Método llamado cuando se crea la actividad
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Inflar el layout de la actividad usando data binding
         binding = ActivityDetailsFoodBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Obtener datos del Intent y configurar la vista con esos datos
         getInformationFromIntent()
         setInformationInViews()
-        getMealDetails() // Llama a la función para obtener detalles de la comida
-        onYoutubeImageLink()//Llamamos a la funcion desde aqui
+
+        // Obtener detalles de la comida usando Retrofit y actualizar la UI
+        getMealDetails()
+
+        // Configurar el botón de favoritos para guardar la receta
+        buttonHearth()
+
+        // Inicializar el repositorio de recetas favoritas
+        favoriteMealRepository = FavoriteMealRepository(this)
     }
 
-
-    //Funcion para que que el ImageView de youtube abra el link hacia esa receta
+    // Función para abrir el enlace de YouTube al hacer clic en la imagen
     private fun onYoutubeImageLink() {
         binding.imgYoutube.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(youtubeLink))
@@ -43,7 +61,7 @@ class Details_Food_activity : AppCompatActivity() {
         }
     }
 
-    //Aplicamos la imagen cargada ya con Glide en el imageView mediante la API y la cargamos
+    // Cargar la imagen y establecer el título de la receta usando Glide
     private fun setInformationInViews() {
         Glide.with(applicationContext)
             .load(mealPhoto)
@@ -53,8 +71,7 @@ class Details_Food_activity : AppCompatActivity() {
         binding.collapsing.setExpandedTitleColor(resources.getColor(R.color.white))
     }
 
-
-    // Los valores se asignan a las variables mealId, mealName, y mealPhoto que son inicializadas al recibir los datos del Intent
+    // Obtener datos del Intent que contiene el ID, nombre y foto de la receta seleccionada
     private fun getInformationFromIntent() {
         val intent = intent
         mealId = intent.getStringExtra(home_fragment.MEAL_ID)!!
@@ -63,7 +80,7 @@ class Details_Food_activity : AppCompatActivity() {
         Log.d("Food Details", "Meal ID: $mealId, Meal Name: $mealName, Meal Photo: $mealPhoto")
     }
 
-    // Obtenemos los detalles de la comida usando Retrofit y actualizamos la UI
+    // Realizar una llamada a la API usando Retrofit para obtener detalles de la comida
     private fun getMealDetails() {
         RetrofitInstance.api.getRandomFood().enqueue(object : Callback<MealList> {
             override fun onResponse(call: Call<MealList>, response: Response<MealList>) {
@@ -82,6 +99,7 @@ class Details_Food_activity : AppCompatActivity() {
         })
     }
 
+    // Actualizar la UI con los detalles obtenidos de la comida
     private fun updateUI(meal: Meal) {
         binding.CategoryId.text = "Category: ${meal.strCategory}"
         binding.AreaId.text = "Area: ${meal.strArea}"
@@ -89,6 +107,72 @@ class Details_Food_activity : AppCompatActivity() {
         youtubeLink = meal.strYoutube
     }
 
+    // Configurar el botón de favoritos para guardar la receta en la base de datos
+    private fun buttonHearth(){
+        binding.btnFavorite.setOnClickListener {
+            saveFavoriteMeal()
+        }
+    }
 
+    // Guardar la receta seleccionada como favorita en la base de datos local
+    private fun saveFavoriteMeal() {
+        val favoriteMeal = FavoriteMeal(mealId, mealName, mealPhoto)
 
+        // Utilizar corrutinas para insertar la receta en la base de datos en el hilo de fondo
+        CoroutineScope(Dispatchers.IO).launch {
+            favoriteMealRepository.insertFavoriteMeal(favoriteMeal)
+
+            // Mostrar un Toast en el hilo principal indicando que se añadió a favoritos
+            withContext(Dispatchers.Main) {
+                Toast.makeText(this@Details_Food_activity, "Added To Favorites", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
 }
+//favoriteMealRepository = FavoriteMealRepository(this) en el oncreate
+
+//private var isFavorite = false
+//
+//private fun buttonHearth() {
+//    binding.btnFavorite.setOnClickListener {
+//        toggleFavoriteIcon()
+//        if (isFavorite) {
+//            saveFavoriteMeal()
+//        }
+//    }
+//}
+//
+//private fun toggleFavoriteIcon() {
+//    isFavorite = !isFavorite
+//    if (isFavorite) {
+//        binding.btnFavorite.setImageResource(R.drawable.ic_heart_filled)
+//        Toast.makeText(this@Details_Food_activity, "Added To Favorites", Toast.LENGTH_SHORT)
+//            .show()
+//    } else {
+//        binding.btnFavorite.setImageResource(R.drawable.ic_heart_empty)
+//    }
+//}
+//
+//    private fun buttonHearth(){
+//        binding.btnFavorite.setOnClickListener {
+//            saveFavoriteMeal()
+//        }
+//    }
+//
+//    // Guardar la receta seleccionada como favorita en la base de datos local
+//    private fun saveFavoriteMeal() {
+//        val favoriteMeal = FavoriteMeal(mealId, mealName, mealPhoto)
+//
+//        // Utilizar corrutinas para insertar la receta en la base de datos en el hilo de fondo
+//        CoroutineScope(Dispatchers.IO).launch {
+//            favoriteMealRepository.insertFavoriteMeal(favoriteMeal)
+//
+//            // Mostrar un Toast en el hilo principal indicando que se añadió a favoritos
+//            withContext(Dispatchers.Main) {
+//                Toast.makeText(this@Details_Food_activity, "Added To Favorites", Toast.LENGTH_SHORT)
+//                    .show()
+//            }
+//        }
+//    }
+//}

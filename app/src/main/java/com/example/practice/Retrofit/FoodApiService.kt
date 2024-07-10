@@ -23,4 +23,8 @@ interface FoodApiService {
     @GET ("filter.php")
     fun getFoodsByCategory(@Query("c") categoryName : String) : Call <FoodByCategories>
 
+    @GET ("search.php")
+
+    fun searchFoods(@Query("s")searchQuery : String) : Call<MealList>
+
 }

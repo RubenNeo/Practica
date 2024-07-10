@@ -2,6 +2,8 @@ package com.example.practice.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,10 +23,12 @@ import com.example.practice.databinding.FragmentHomeFragmentBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.Query
 
 class home_fragment : Fragment() {
     private lateinit var binding: FragmentHomeFragmentBinding
     private lateinit var categoriesAdapter: CategoriesAdapter
+
 
     companion object {
         const val MEAL_ID = "com.example.practice.fragments.MEAL_ID"
@@ -46,7 +50,10 @@ class home_fragment : Fragment() {
         prepareCategoriesRecyclerView()
         loadRandomFood()
     }
-//Hacemos la funcion de que al clickar en cada uno de los elemenos del recycler view nos lleve a las diferentes comidas que tiene cada clase
+
+
+
+    //Hacemos la funcion de que al clickar en cada uno de los elemenos del recycler view nos lleve a las diferentes comidas que tiene cada clase
     private fun onCategoryClick(category: Category) {
         val intent = Intent (activity, CategoryListActivity::class.java)
         intent.putExtra(CATEGORY_NAME, category.strCategory)
@@ -60,6 +67,7 @@ class home_fragment : Fragment() {
         binding.rvCategories.apply {
             layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
             adapter = categoriesAdapter
+
         }
     }
 
@@ -119,4 +127,5 @@ class home_fragment : Fragment() {
         super.onResume()
         loadCategories()
     }
+
 }

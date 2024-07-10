@@ -15,6 +15,7 @@ import com.example.practice.ApiServiceMeal.CategoryList
 import com.example.practice.ApiServiceMeal.Meal
 import com.example.practice.ApiServiceMeal.MealList
 import com.example.practice.Retrofit.RetrofitInstance
+import com.example.practice.activities.CategoryListActivity
 import com.example.practice.activities.Details_Food_activity
 import com.example.practice.databinding.FragmentHomeFragmentBinding
 import retrofit2.Call
@@ -29,6 +30,7 @@ class home_fragment : Fragment() {
         const val MEAL_ID = "com.example.practice.fragments.MEAL_ID"
         const val MEAL_NAME = "com.example.practice.fragments.MEAL_NAME"
         const val MEAL_PHOTO = "com.example.practice.fragments.MEAL_PHOTO"
+        const val CATEGORY_NAME = "com.example.practice.fragments.CATEGORY_NAME"
     }
 
     override fun onCreateView(
@@ -44,9 +46,17 @@ class home_fragment : Fragment() {
         prepareCategoriesRecyclerView()
         loadRandomFood()
     }
+//Hacemos la funcion de que al clickar en cada uno de los elemenos del recycler view nos lleve a las diferentes comidas que tiene cada clase
+    private fun onCategoryClick(category: Category) {
+        val intent = Intent (activity, CategoryListActivity::class.java)
+        intent.putExtra(CATEGORY_NAME, category.strCategory)
+        startActivity(intent)
+    }
 
     private fun prepareCategoriesRecyclerView() {
-        categoriesAdapter = CategoriesAdapter()
+        categoriesAdapter = CategoriesAdapter { category ->
+            onCategoryClick(category)
+        }
         binding.rvCategories.apply {
             layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
             adapter = categoriesAdapter

@@ -1,60 +1,73 @@
 package com.example.practice.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.practice.R
+import androidx.recyclerview.widget.GridLayoutManager
+import com.example.practice.Adapter.CategoriesAdapter
+import com.example.practice.ApiServiceMeal.Category
+import com.example.practice.ApiServiceMeal.CategoryList
+import com.example.practice.Retrofit.RetrofitInstance
+import com.example.practice.databinding.FragmentCategoriesFragmentBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [Categories_fragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Categories_fragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var binding: FragmentCategoriesFragmentBinding
+    private lateinit var categoriesAdapter: CategoriesAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_categories_fragment, container, false)
+        binding = FragmentCategoriesFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+
+
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Categories_fragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Categories_fragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        prepareRecycler()
+    }
+
+    fun prepareRecycler() {
+        categoriesAdapter = CategoriesAdapter({})
+        binding.rvCategoriesFragment.apply {
+            layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
+            adapter = categoriesAdapter
+
+        }
+    }
+
+    private fun loadCategories() {
+        RetrofitInstance.api.getItemCategories()?.enqueue(object : Callback<CategoryList> {
+            override fun onResponse(call: Call<CategoryList>, response: Response<CategoryList>) {
+                if (response.isSuccessful && response.body() != null) {
+                    val categoryList: List<Category> = response.body()!!.categories
+                    categoriesAdapter.setCategoryList(categoryList)
+                } else {
+                    Log.e("TEST", "categories")
                 }
             }
+
+            override fun onFailure(call: Call<CategoryList>, t: Throwable) {
+                Log.e("TEST", "categories: ${t.message}")
+            }
+        })
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        loadCategories()
     }
 }
+
+

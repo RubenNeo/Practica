@@ -8,7 +8,9 @@ import com.example.practice.ApiServiceMeal.Category
 import com.example.practice.ApiServiceMeal.CategoryList
 import com.example.practice.databinding.CategoryFoodBinding
 
-class CategoriesAdapter() : RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder>() {
+class CategoriesAdapter(
+    var onItemClick : (Category) -> Unit
+) : RecyclerView.Adapter<CategoriesAdapter.CategoryViewHolder>() {
     private var CategoryList = ArrayList<Category>()
 
     fun setCategoryList(categoryList: List<Category>) {
@@ -34,6 +36,11 @@ class CategoriesAdapter() : RecyclerView.Adapter<CategoriesAdapter.CategoryViewH
             .load(CategoryList[position].strCategoryThumb)
             .into(holder.binding.ivCategory)
         holder.binding.tvCategories.text = CategoryList[position].strCategory
+        //setOnclickLister para cada item de la celda
+       holder.itemView.setOnClickListener {
+           onItemClick(CategoryList[position])
+       }
+
     }
 
 

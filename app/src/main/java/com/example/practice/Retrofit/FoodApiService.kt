@@ -17,9 +17,10 @@ interface FoodApiService {
     @GET("lookup-php?")
     fun getFoodDetails(@Query("i") id: String): Call<MealList>
 
-    @GET("filter.php?")
-    fun getPopularFoods(@Query("c") CategoryFood: String): Call<FoodByCategories>
-
     @GET("categories.php")
     fun getItemCategories(): Call<CategoryList>
+
+    @GET ("filter.php")
+    fun getFoodsByCategory(@Query("c") categoryName : String) : Call <FoodByCategories>
+
 }

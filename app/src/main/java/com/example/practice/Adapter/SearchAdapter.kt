@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.practice.ApiServiceMeal.Meal
 import com.example.practice.databinding.FoodItemBinding
 
-class FoodAdapter : ListAdapter<Meal, FoodAdapter.FoodViewHolder>(FoodDiffCallback()) {
+class FoodAdapter(var onMealClick:(Meal) -> Unit) : ListAdapter<Meal, FoodAdapter.FoodViewHolder>(FoodDiffCallback()) {
 
     // Método llamado cuando se necesita crear un nuevo ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {
@@ -23,6 +23,9 @@ class FoodAdapter : ListAdapter<Meal, FoodAdapter.FoodViewHolder>(FoodDiffCallba
         // Vincular los datos del Meal en la posición específica al ViewHolder
         val meal = getItem(position)
         holder.bind(meal)
+        holder.itemView.setOnClickListener {
+            onMealClick(meal)
+        }
     }
 
     // Clase interna que define el ViewHolder
@@ -34,6 +37,8 @@ class FoodAdapter : ListAdapter<Meal, FoodAdapter.FoodViewHolder>(FoodDiffCallba
             Glide.with(binding.root) // Cargar la imagen de la comida utilizando Glide
                 .load(meal.strMealThumb)
                 .into(binding.ivFood)
+
+
         }
     }
 

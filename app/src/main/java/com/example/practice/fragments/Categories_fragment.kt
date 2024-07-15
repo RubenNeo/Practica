@@ -1,5 +1,6 @@
 package com.example.practice.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,11 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.practice.Adapter.FoodAdapter
 import com.example.practice.ApiServiceMeal.Meal
 import com.example.practice.ApiServiceMeal.MealList
 import com.example.practice.Retrofit.RetrofitInstance
+import com.example.practice.activities.Details_Food_activity
 import com.example.practice.databinding.FragmentCategoriesFragmentBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -39,9 +41,17 @@ class FoodListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Inicialización del adapter y configuración del RecyclerView
-        foodAdapter = FoodAdapter()
+        foodAdapter = FoodAdapter { meal ->
+            val intent = Intent(requireContext(), Details_Food_activity::class.java).apply {
+                putExtra(home_fragment.MEAL_ID, meal.idMeal)
+                putExtra(home_fragment.MEAL_NAME, meal.strMeal)
+                putExtra(home_fragment.MEAL_PHOTO, meal.strMealThumb)
+            }
+            startActivity(intent)
+        }
+
         binding.rvFood.apply {
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
             adapter = foodAdapter
         }
 

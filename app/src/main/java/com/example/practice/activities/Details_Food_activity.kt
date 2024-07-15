@@ -51,6 +51,8 @@ class  Details_Food_activity : AppCompatActivity() {
 
         // Inicializar el repositorio de recetas favoritas
         favoriteMealRepository = FavoriteMealRepository(this)
+
+        onYoutubeImageLink()
     }
 
     // Función para abrir el enlace de YouTube al hacer clic en la imagen

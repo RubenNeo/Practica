@@ -15,4 +15,9 @@
         android:name="com.example.practice.fragments.Favorite_fragment"
         android:label="fragment_favorite_fragment"
         tools:layout="@layout/fragment_favorite_fragment" />
+    <fragment
+        android:id="@+id/categories_fragment"
+        android:name="com.example.practice.fragments.FoodListFragment"
+        android:label="Categories Fragment"
+        tools:layout="@layout/fragment_categories_fragment" />
 </navigation>

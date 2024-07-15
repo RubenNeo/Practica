@@ -5,11 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.practice.ApiServiceMeal.CategoryFood
-import com.example.practice.ApiServiceMeal.FoodByCategories
-import com.example.practice.ApiServiceMeal.MealList
 import com.example.practice.databinding.FoodItemBinding
 
-class FoodByCategoriesAdapter : RecyclerView.Adapter<FoodByCategoriesAdapter.CategoryFoodViewModel>() {
+class FoodByCategoriesAdapter(var OnFoodDetails: (CategoryFood)-> Unit) : RecyclerView.Adapter<FoodByCategoriesAdapter.CategoryFoodViewModel>() {
 
     private var mealList : List<CategoryFood> = emptyList()
 
@@ -35,6 +33,10 @@ class FoodByCategoriesAdapter : RecyclerView.Adapter<FoodByCategoriesAdapter.Cat
             .load(meal.strMealThumb)
             .into(holder.binding.ivFood)
         holder.binding.tvFoodName.text = meal.strMeal
+
+        holder.itemView.setOnClickListener {
+                OnFoodDetails(meal)
+        }
 
     }
 }

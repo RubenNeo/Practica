@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.practice.database.FavoriteMeal
 import com.example.practice.databinding.FoodItemBinding
 
-class FavoriteAdapter :
+class FavoriteAdapter(var onFavoriteClick: (FavoriteMeal)-> Unit) :
     ListAdapter<FavoriteMeal, FavoriteAdapter.FavoriteAdapterViewHolder>(FavoriteMealDiffCallback()) {
 
     // ViewHolder que contiene la vista de cada elemento en el RecyclerView
@@ -33,6 +33,9 @@ class FavoriteAdapter :
     override fun onBindViewHolder(holder: FavoriteAdapterViewHolder, position: Int) {
         val favoriteMeal = getItem(position)
         holder.bind(favoriteMeal)
+        holder.itemView.setOnClickListener {
+            onFavoriteClick(favoriteMeal)
+        }
     }
 
     // Clase de utilidad para manejar la diferencia en la lista de elementos

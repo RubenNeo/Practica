@@ -108,7 +108,7 @@ class  Details_Food_activity : AppCompatActivity() {
     }
 
     // Configurar el botón de favoritos para guardar la receta en la base de datos
-    private fun buttonHearth(){
+    private fun buttonHearth() {
         binding.btnFavorite.setOnClickListener {
             saveFavoriteMeal()
         }
@@ -130,49 +130,3 @@ class  Details_Food_activity : AppCompatActivity() {
         }
     }
 }
-//favoriteMealRepository = FavoriteMealRepository(this) en el oncreate
-
-//private var isFavorite = false
-//
-//private fun buttonHearth() {
-//    binding.btnFavorite.setOnClickListener {
-//        toggleFavoriteIcon()
-//        if (isFavorite) {
-//            saveFavoriteMeal()
-//        }
-//    }
-//}
-//
-//private fun toggleFavoriteIcon() {
-//    isFavorite = !isFavorite
-//    if (isFavorite) {
-//        binding.btnFavorite.setImageResource(R.drawable.ic_heart_filled)
-//        Toast.makeText(this@Details_Food_activity, "Added To Favorites", Toast.LENGTH_SHORT)
-//            .show()
-//    } else {
-//        binding.btnFavorite.setImageResource(R.drawable.ic_heart_empty)
-//    }
-//}
-//
-//    private fun buttonHearth(){
-//        binding.btnFavorite.setOnClickListener {
-//            saveFavoriteMeal()
-//        }
-//    }
-//
-//    // Guardar la receta seleccionada como favorita en la base de datos local
-//    private fun saveFavoriteMeal() {
-//        val favoriteMeal = FavoriteMeal(mealId, mealName, mealPhoto)
-//
-//        // Utilizar corrutinas para insertar la receta en la base de datos en el hilo de fondo
-//        CoroutineScope(Dispatchers.IO).launch {
-//            favoriteMealRepository.insertFavoriteMeal(favoriteMeal)
-//
-//            // Mostrar un Toast en el hilo principal indicando que se añadió a favoritos
-//            withContext(Dispatchers.Main) {
-//                Toast.makeText(this@Details_Food_activity, "Added To Favorites", Toast.LENGTH_SHORT)
-//                    .show()
-//            }
-//        }
-//    }
-//}

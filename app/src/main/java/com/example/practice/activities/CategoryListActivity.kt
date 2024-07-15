@@ -1,9 +1,9 @@
 package com.example.practice.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.practice.Adapter.FoodByCategoriesAdapter
 import com.example.practice.ApiServiceMeal.FoodByCategories
 import com.example.practice.Retrofit.RetrofitInstance
@@ -19,38 +19,59 @@ class CategoryListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Inflar el layout de la actividad usando el binding generado
         binding = ActivityCategoryListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Inicializar el RecyclerView y obtener datos por categoría
         initRecyclerView()
-        fetchFoodsByCategory(intent.getStringExtra(home_fragment.CATEGORY_NAME)!!) // Llamar a la función para obtener datos por categoría
+        fetchFoodsByCategory(intent.getStringExtra(home_fragment.CATEGORY_NAME)!!)
     }
 
+    // Función para inicializar el RecyclerView y configurar el adaptador
     private fun initRecyclerView() {
-        foodByCategoriesAdapter = FoodByCategoriesAdapter()
+        // Crear una instancia del adaptador personalizado FoodByCategoriesAdapter
+        foodByCategoriesAdapter = FoodByCategoriesAdapter { categoryFood ->
+            // Manejar el clic en un elemento del RecyclerView aquí
+            val intent = Intent(this, Details_Food_activity::class.java).apply {
+                putExtra(home_fragment.MEAL_ID, categoryFood.idMeal)
+                putExtra(home_fragment.MEAL_NAME, categoryFood.strMeal)
+                putExtra(home_fragment.MEAL_PHOTO, categoryFood.strMealThumb)
+            }
+            startActivity(intent)
+        }
+
+        // Configurar el RecyclerView con un GridLayoutManager de 2 columnas
         binding.rvFoodByCategory.apply {
-            layoutManager = LinearLayoutManager(this@CategoryListActivity)
-            layoutManager = GridLayoutManager(context, 2, GridLayoutManager.VERTICAL,false)
+            layoutManager = GridLayoutManager(context, 2)
             adapter = foodByCategoriesAdapter
         }
     }
 
+    // Función para obtener datos por categoría desde la API usando Retrofit
     private fun fetchFoodsByCategory(category: String) {
-        RetrofitInstance.api.getFoodsByCategory(category)?.enqueue(object : Callback<FoodByCategories> {
-            override fun onResponse(call: Call<FoodByCategories>, response: Response<FoodByCategories>) {
-                if (response.isSuccessful) {
-                    response.body()?.meals?.let {
-                        foodByCategoriesAdapter.setCategoriesList(it)
+        // Llamar a la API para obtener las comidas por categoría
+        RetrofitInstance.api.getFoodsByCategory(category)
+            ?.enqueue(object : Callback<FoodByCategories> {
+                override fun onResponse(
+                    call: Call<FoodByCategories>,
+                    response: Response<FoodByCategories>
+                ) {
+                    if (response.isSuccessful) {
+                        // Actualizar el adaptador con la lista de comidas obtenidas
+                        response.body()?.meals?.let {
+                            foodByCategoriesAdapter.setCategoriesList(it)
+                        }
+                    } else {
+                        // Manejar algún tipo de respuesta de error si la llamada no fue exitosa
                     }
-                } else {
-                   //Poner algun tipo de respuesta
                 }
-            }
 
-            override fun onFailure(call: Call<FoodByCategories>, t: Throwable) {
-                t.printStackTrace()
-                //error
-            }
-        })
+                override fun onFailure(call: Call<FoodByCategories>, t: Throwable) {
+                    // Manejar el error de la llamada a la API
+                    t.printStackTrace()
+                }
+            })
     }
 }

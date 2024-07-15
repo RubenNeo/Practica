@@ -1,5 +1,6 @@
 package com.example.practice.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.practice.Adapter.FavoriteAdapter
+import com.example.practice.activities.Details_Food_activity
 import com.example.practice.database.FavoriteMeal
 import com.example.practice.database.FavoriteMealRepository
 import com.example.practice.databinding.FragmentFavoriteFragmentBinding
@@ -57,16 +59,20 @@ class Favorite_fragment : Fragment() {
 
     // Método para configurar el RecyclerView
     private fun setupRecyclerView() {
-        favoriteAdapter = FavoriteAdapter()
+        favoriteAdapter = FavoriteAdapter { favoriteMeal ->
+            val intent = Intent(requireContext(), Details_Food_activity::class.java).apply {
+                putExtra(home_fragment.MEAL_ID, favoriteMeal.idMeal)
+                putExtra(home_fragment.MEAL_NAME, favoriteMeal.strMeal)
+                putExtra(home_fragment.MEAL_PHOTO, favoriteMeal.strMealThumb)
+            }
+            startActivity(intent)
+        }
+
         binding.rvFavorites.apply {
             adapter = favoriteAdapter
-            // Configurar el LinearLayoutManager para mostrar las recetas en una lista vertical
-            layoutManager = LinearLayoutManager(requireContext())
-            // Configurar el GridLayoutManager para mostrar las recetas en una cuadrícula de 2 columnas
-            layoutManager = GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
+            layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         }
     }
-
     // Método para cargar las recetas favoritas desde la base de datos usando corrutinas
     private fun loadFavoriteMeals() {
         GlobalScope.launch(Dispatchers.Main) {
